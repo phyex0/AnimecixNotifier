@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: AnimecixNotifier
+
+  mongodb:
+    uri: mongodb://localhost:21017/animecix-db
+
+
+
+
+client:
+  animecix: https://animecix.tv
