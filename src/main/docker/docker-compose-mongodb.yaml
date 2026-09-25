@@ -1,0 +1,18 @@
+version: '3.9'
+name: animecix
+
+services:
+  mongodb:
+    image: mongo:8.0
+    container_name: mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+        - MONGO_INITDB_DATABASE=animecix-db
+        - GLIBC_TUNABLES=glibc.pthread.rseq=1
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:

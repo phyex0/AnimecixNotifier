@@ -20,5 +20,4 @@ public class AnimeDocument {
     private Integer episode;
 
     private LocalDateTime releaseDate;
-
 }

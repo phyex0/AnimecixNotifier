@@ -6,10 +6,12 @@ spring:
     name: AnimecixNotifier
 
   mongodb:
-    uri: mongodb://localhost:21017/animecix-db
+    uri: mongodb://casper:27017/animecix-db
 
 
-
+logging:
+  level:
+    root: info
 
 client:
   animecix: https://animecix.tv
