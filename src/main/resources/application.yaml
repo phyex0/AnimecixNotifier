@@ -8,6 +8,9 @@ spring:
   mongodb:
     uri: mongodb://casper:27017/animecix-db
 
+  data:
+    redis:
+      host: casper
 
 logging:
   level:

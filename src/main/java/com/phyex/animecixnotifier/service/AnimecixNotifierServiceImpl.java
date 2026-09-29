@@ -28,6 +28,7 @@ public class AnimecixNotifierServiceImpl implements AnimecixNotifierService {
     private final AnimecixClient animecixClient;
     private final UserRepository userRepository;
 
+
     @Override
     @Transactional
     public void register(RegisterDTO registerDTO) {
@@ -39,7 +40,8 @@ public class AnimecixNotifierServiceImpl implements AnimecixNotifierService {
     }
 
     private Optional<UserDocument> createUser(RegisterDTO registerDTO) {
-        ResponseEntity<JsonNode> loginResponse = animecixClient.loginAndFetchList(new LoginDTO(registerDTO.email(), registerDTO.password(), false));
+        LoginDTO loginDTO = new LoginDTO(registerDTO.email(), registerDTO.password(), false);
+        ResponseEntity<JsonNode> loginResponse = animecixClient.loginAndFetchList(loginDTO.email(), loginDTO);
 
         if (loginResponse.getStatusCode().is2xxSuccessful()) {
             UserDocument userDocument = new UserDocument();
@@ -47,7 +49,7 @@ public class AnimecixNotifierServiceImpl implements AnimecixNotifierService {
             userDocument.setEmail(registerDTO.email());
             userDocument.setPassword(registerDTO.password());
             userDocument.setPhone(registerDTO.phone());
-            userDocument.setId(loginResponse.getBody().get("user").get("id").stringValue());
+            userDocument.setId(loginResponse.getBody().get("user").get("id").asString());
             userDocument.setAnimeDocumentList(parseWatchList(loginResponse.getBody().get("watchlist").get("items")));
 
             return Optional.of(userDocument);
@@ -61,16 +63,16 @@ public class AnimecixNotifierServiceImpl implements AnimecixNotifierService {
         return watchList.valueStream().map(item -> {
             AnimeDocument animeDocument = new AnimeDocument();
 
-            animeDocument.setId(item.get("id").stringValue());
-            animeDocument.setName(item.get("name").stringValue());
-            animeDocument.setSeason(item.get("seasons").asArray().size());
-            animeDocument.setEpisode(item.get("seasons")
-                    .valueStream()
-                    .filter(ep -> ep.get("number").asInt() == animeDocument.getSeason())
-                    .map(ep -> ep.get("episode_count").asInt())
-                    .findFirst().orElse(0)
-            );
-            animeDocument.setReleaseDate(parseDate(item.get("release_date").asString()));
+            animeDocument.setId(item.get("id").asString());
+            animeDocument.setName(item.get("name").asString());
+            animeDocument.setSeason(item.get("season_count").asInt());
+//            animeDocument.setEpisode(item.get("seasons")
+//                    .valueStream()
+//                    .filter(ep -> ep.get("number").asInt() == animeDocument.getSeason())
+//                    .map(ep -> ep.get("episode_count").asInt())
+//                    .findFirst().orElse(0)
+//            );
+//            animeDocument.setReleaseDate(parseDate(item.get("release_date").asString()));
 
             return animeDocument;
         }).toList();
