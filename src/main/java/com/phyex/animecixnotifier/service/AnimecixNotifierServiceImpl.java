@@ -17,8 +17,7 @@ import tools.jackson.databind.JsonNode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -35,47 +34,58 @@ public class AnimecixNotifierServiceImpl implements AnimecixNotifierService {
         Boolean isUserExist = userRepository.existsByEmail(registerDTO.email());
 
         if (!isUserExist) {
-            createUser(registerDTO).ifPresent(userRepository::save);
+            fetchUserDocument(new LoginDTO(registerDTO.email(), registerDTO.password(), true))
+                    .ifPresent(userDocument -> {
+                                userDocument.setPhone(registerDTO.phone());
+                                userRepository.save(userDocument);
+                            }
+                    );
         }
     }
 
-    private Optional<UserDocument> createUser(RegisterDTO registerDTO) {
-        LoginDTO loginDTO = new LoginDTO(registerDTO.email(), registerDTO.password(), false);
+    @Override
+    public Optional<UserDocument> fetchUserDocument(LoginDTO loginDTO) {
         ResponseEntity<JsonNode> loginResponse = animecixClient.loginAndFetchList(loginDTO.email(), loginDTO);
 
         if (loginResponse.getStatusCode().is2xxSuccessful()) {
             UserDocument userDocument = new UserDocument();
 
-            userDocument.setEmail(registerDTO.email());
-            userDocument.setPassword(registerDTO.password());
-            userDocument.setPhone(registerDTO.phone());
-            userDocument.setId(loginResponse.getBody().get("user").get("id").asString());
-            userDocument.setAnimeDocumentList(parseWatchList(loginResponse.getBody().get("watchlist").get("items")));
+            userDocument.setEmail(loginDTO.email());
+            userDocument.setPassword(loginDTO.password());
+            userDocument.setId(loginResponse
+                    .getBody()
+                    .get("user")
+                    .get("id")
+                    .asString()
+            );
+            userDocument.setAnimeDocumentList(
+                    parseWatchList(
+                            loginResponse
+                                    .getBody()
+                                    .get("watchlist")
+                                    .get("items")
+                    )
+            );
 
             return Optional.of(userDocument);
         }
-
         return Optional.empty();
     }
 
-
     private List<AnimeDocument> parseWatchList(JsonNode watchList) {
-        return watchList.valueStream().map(item -> {
-            AnimeDocument animeDocument = new AnimeDocument();
+        return watchList
+                .valueStream()
+                .map(item -> {
+                            AnimeDocument animeDocument = new AnimeDocument();
 
-            animeDocument.setId(item.get("id").asString());
-            animeDocument.setName(item.get("name").asString());
-            animeDocument.setSeason(item.get("season_count").asInt());
-//            animeDocument.setEpisode(item.get("seasons")
-//                    .valueStream()
-//                    .filter(ep -> ep.get("number").asInt() == animeDocument.getSeason())
-//                    .map(ep -> ep.get("episode_count").asInt())
-//                    .findFirst().orElse(0)
-//            );
-//            animeDocument.setReleaseDate(parseDate(item.get("release_date").asString()));
+                            animeDocument.setId(item.get("id").asString());
+                            animeDocument.setName(item.get("name").asString());
+                            animeDocument.setSeason(item.get("season_count").asInt());
 
-            return animeDocument;
-        }).toList();
+                            return animeDocument;
+                        }
+                )
+                .toList();
     }
 
     private LocalDateTime parseDate(String date) {
@@ -90,12 +100,63 @@ public class AnimecixNotifierServiceImpl implements AnimecixNotifierService {
     }
 
     @Override
-    public JsonNode loginAndFetchList() {
-        return null;
+    @Transactional
+    public void updateAll() {
+        userRepository.findAll().forEach(this::updateUser);
     }
 
     @Override
-    public JsonNode fetchAnime() {
-        return null;
+    public void updateUser(UserDocument userDocument) {
+        fetchUserDocument(new LoginDTO(userDocument.getEmail(), userDocument.getPassword(), true))
+                .ifPresent(remoteUser -> {
+                            updateAnimeList(userDocument, remoteUser);
+                            updateEpisode(userDocument);
+                        }
+                );
+    }
+
+    private void updateAnimeList(UserDocument user, UserDocument remoteUser) {
+        List<AnimeDocument> userList = user.getAnimeDocumentList();
+        List<AnimeDocument> remoteList = remoteUser.getAnimeDocumentList();
+
+        if (userList == null) {
+            userList = new ArrayList<>();
+            user.setAnimeDocumentList(userList);
+        }
+
+        if (remoteList == null || remoteList.isEmpty()) {
+            userList.clear();
+            return;
+        }
+
+        Map<String, AnimeDocument> remoteMap = remoteUser.getAnimeDocumentMap();
+        userList.removeIf(anime -> {
+            if (!remoteMap.containsKey(anime.getId()))
+                return true;
+
+            AnimeDocument remoteAnime = remoteMap.get(anime.getId());
+            anime.setSeason(remoteAnime.getSeason());
+
+            return false;
+        });
+
+        Set<String> userAnimeIds = user.getAnimeDocumentMap().keySet();
+        for (AnimeDocument remoteAnime : remoteList) {
+            if (!userAnimeIds.contains(remoteAnime.getId())) {
+                userList.add(remoteAnime);
+            }
+        }
+    }
+
+    @Override
+    public void updateEpisode(UserDocument userDocument) {
+        userDocument.getAnimeDocumentList().forEach(anime -> {
+            ResponseEntity<JsonNode> episodeResponse = animecixClient.fetchEpisode(userDocument.getEmail(), anime.getId(), anime.getSeason());
+            if (episodeResponse.getStatusCode().is2xxSuccessful()) {
+                log.info(String.valueOf(episodeResponse.getBody()));
+//                anime.setEpisode();
+//                anime.setReleaseDate();
+            }
+        });
     }
 }

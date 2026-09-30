@@ -1,17 +1,21 @@
 package com.phyex.animecixnotifier.service;
 
+import com.phyex.animecixnotifier.document.UserDocument;
 import com.phyex.animecixnotifier.dto.LoginDTO;
 import com.phyex.animecixnotifier.dto.RegisterDTO;
-import com.phyex.animecixnotifier.dto.SessionInfo;
-import tools.jackson.databind.JsonNode;
+
+import java.util.Optional;
 
 public interface AnimecixNotifierService {
 
 
-
     void register(RegisterDTO registerDTO);
 
-    JsonNode loginAndFetchList();
+    Optional<UserDocument> fetchUserDocument(LoginDTO loginDTO);
 
-    JsonNode fetchAnime();
+    void updateAll();
+
+    void updateUser(UserDocument userDocument);
+
+    void updateEpisode(UserDocument userDocument);
 }

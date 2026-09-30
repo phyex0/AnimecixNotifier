@@ -25,4 +25,11 @@ public class AnimecixNotifierController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/update")
+    public ResponseEntity<Void> update() {
+        animecixNotifierService.updateAll();
+
+        return ResponseEntity.ok().build();
+    }
 }
