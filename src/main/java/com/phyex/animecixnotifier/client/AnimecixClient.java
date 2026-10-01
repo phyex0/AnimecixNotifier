@@ -15,5 +15,5 @@ public interface AnimecixClient {
     ResponseEntity<JsonNode> loginAndFetchList(@RequestHeader("email") String email, @RequestBody LoginDTO loginDTO);
 
     @GetMapping(value = "/secure/titles/{episodeId}/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<JsonNode> fetchEpisode(@RequestHeader("email") String email, @PathVariable String episodeId, @RequestParam Integer seasonNumber);
+    ResponseEntity<JsonNode> fetchEpisode(@PathVariable String episodeId, @RequestParam Integer seasonNumber);
 }

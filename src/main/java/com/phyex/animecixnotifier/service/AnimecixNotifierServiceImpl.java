@@ -151,9 +151,9 @@ public class AnimecixNotifierServiceImpl implements AnimecixNotifierService {
     @Override
     public void updateEpisode(UserDocument userDocument) {
         userDocument.getAnimeDocumentList().forEach(anime -> {
-            ResponseEntity<JsonNode> episodeResponse = animecixClient.fetchEpisode(userDocument.getEmail(), anime.getId(), anime.getSeason());
+            ResponseEntity<JsonNode> episodeResponse = animecixClient.fetchEpisode(anime.getId(), anime.getSeason());
             if (episodeResponse.getStatusCode().is2xxSuccessful()) {
-                log.info(String.valueOf(episodeResponse.getBody()));
+                log.info("Local: {}-{}, Remote: {}-{}", anime.getId(), anime.getName(), episodeResponse.getBody().get("title").get("id").asString(), episodeResponse.getBody().get("title").get("name").asString());
 //                anime.setEpisode();
 //                anime.setReleaseDate();
             }

@@ -27,7 +27,7 @@ public class AnimecixSessionServiceImpl implements AnimecixSessionService {
     @Override
     public SessionInfo getSessionInfo(String email) {
 
-        SessionInfo sessionInfo = (SessionInfo ) redisTemplate.opsForHash().get(email, SessionInfo.class.getName());
+        SessionInfo sessionInfo = (SessionInfo) redisTemplate.opsForHash().get(email, SessionInfo.class.getName());
 
         if (Objects.isNull(sessionInfo)) {
             ResponseEntity<String> bootstrapData = animecixSessionClient.bootstrapData(clientConfig.getAnimecix());
