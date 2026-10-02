@@ -27,7 +27,7 @@ public class UserDocument implements Serializable {
 
     private String password;
 
-    private String phone;
+    private String telegramUser;
 
     private List<AnimeDocument> animeDocumentList = new ArrayList<>();
 

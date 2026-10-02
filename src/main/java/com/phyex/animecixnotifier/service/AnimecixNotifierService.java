@@ -8,10 +8,11 @@ import java.util.Optional;
 
 public interface AnimecixNotifierService {
 
-
     void register(RegisterDTO registerDTO);
 
     Optional<UserDocument> fetchUserDocument(LoginDTO loginDTO);
+
+    void fetchLastEpisodes();
 
     void updateAll();
 

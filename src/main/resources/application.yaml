@@ -4,15 +4,16 @@ server:
 spring:
   application:
     name: AnimecixNotifier
+
   main:
     allow-bean-definition-overriding: true
 
   mongodb:
     uri: mongodb://casper:27017/animecix-db
 
-  data:
-    redis:
-      host: casper
+  threads:
+    virtual:
+      enabled: true
 
 logging:
   level:
