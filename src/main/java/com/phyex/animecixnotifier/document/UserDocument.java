@@ -1,5 +1,6 @@
 package com.phyex.animecixnotifier.document;
 
+import com.phyex.animecixnotifier.enums.NotifyType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,7 +28,9 @@ public class UserDocument implements Serializable {
 
     private String password;
 
-    private String telegramUser;
+    private NotifyType notifyType;
+
+    private String notifyId;
 
     private List<AnimeDocument> animeDocumentList = new ArrayList<>();
 
