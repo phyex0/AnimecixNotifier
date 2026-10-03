@@ -17,8 +17,8 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@EnableRetry
 @RequiredArgsConstructor
+@EnableRetry(proxyTargetClass = true)
 public class AnimecixFetchServiceImpl implements AnimecixFetchService {
 
     private final AnimecixClient animecixClient;
@@ -36,7 +36,7 @@ public class AnimecixFetchServiceImpl implements AnimecixFetchService {
     }
 
     @Recover
-    public Optional<UserDTO> recoverUser(FetchException fe) {
+    public Optional<UserDTO> recoverUser(FetchException fe, LoginDTO loginDTO) {
         //TODO notify Admin
         log.error(fe.getMessage());
         return Optional.empty();
@@ -57,7 +57,7 @@ public class AnimecixFetchServiceImpl implements AnimecixFetchService {
 
     @Recover
     @Retryable(retryFor = FetchException.class)
-    public Optional<LastEpisode> recoverLastEpisode(FetchException fe) {
+    public Optional<LastEpisode> recoverLastEpisode(FetchException fe, Integer page) {
         //TODO notify Admin 
         log.error(fe.getMessage());
         return Optional.empty();

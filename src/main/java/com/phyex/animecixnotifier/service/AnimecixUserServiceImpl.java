@@ -3,11 +3,13 @@ package com.phyex.animecixnotifier.service;
 import com.phyex.animecixnotifier.document.AnimeDocument;
 import com.phyex.animecixnotifier.document.UserDocument;
 import com.phyex.animecixnotifier.dto.LoginDTO;
+import com.phyex.animecixnotifier.dto.NotifyDTO;
 import com.phyex.animecixnotifier.dto.RegisterDTO;
 import com.phyex.animecixnotifier.dto.lastepisodes.LastEpisodeData;
 import com.phyex.animecixnotifier.dto.user.AnimeDTO;
 import com.phyex.animecixnotifier.dto.user.UserDTO;
 import com.phyex.animecixnotifier.repository.UserRepository;
+import com.phyex.animecixnotifier.service.notify.AnimecixNotifyDispatcher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ public class AnimecixUserServiceImpl implements AnimecixUserService {
 
     private final UserRepository userRepository;
     private final AnimecixFetchService animecixFetchService;
+    private final AnimecixNotifyDispatcher animecixNotifyDispatcher;
 
     private final Map<String, LastEpisodeData> LAST_EPISODE_MAP = new ConcurrentHashMap<>();
 
@@ -161,7 +164,10 @@ public class AnimecixUserServiceImpl implements AnimecixUserService {
                     anime.setSeason(lastEpisodeData.getSeason());
                     anime.setEpisode(lastEpisodeData.getEpisode());
 
-                    log.info("Dear user {}! New Episode for: {}, Season: {}, Episode: {}, Released at :{}", userDocument.getEmail(), anime.getName(), anime.getSeason(), anime.getEpisode(), anime.getReleaseDate());
+                    String message = String.format("Dear user %s! New Episode for: %s, Season: %s, Episode: %s, Released at :%s", userDocument.getEmail(), anime.getName(), anime.getSeason(), anime.getEpisode(), anime.getReleaseDate());
+
+                    animecixNotifyDispatcher.dispatch(new NotifyDTO(userDocument.getNotifyType(), userDocument.getNotifyId(), message));
+                    log.info(message);
                     //TODO: Throw notification;
                 }
             }
