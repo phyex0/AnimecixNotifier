@@ -1,0 +1,28 @@
+name: tools
+
+services:
+  mongodb:
+    image: mongo:8.0
+    container_name: mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      - GLIBC_TUNABLES=glibc.pthread.rseq=1
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - tools-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  tools-network:
+    name: tools-network
