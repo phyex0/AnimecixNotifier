@@ -24,6 +24,7 @@ public class AnimecixNotifyDispatcher {
     public void dispatch(NotifyDTO notifyDTO) {
 
         AnimecixNotifier animecixNotifier = notifierMap.get(notifyDTO.notifyType());
+        log.debug("Notify event recieved: {}", notifyDTO);
 
         if (Objects.isNull(animecixNotifier)) {
             log.error("Invalid notify dispatcher");

@@ -31,7 +31,7 @@ public class TelegramBot implements SpringLongPollingBot {
 
     private void handle(List<Update> updates) {
         updates.forEach(update -> {
-            log.info("Update: {}, {}", update.getMessage().getChat(), update.getMessage().getText());
+            log.debug("Update: {}, {}", update.getMessage().getChat(), update.getMessage().getText());
             telegramCommandDispatcher.dispatch(update);
         });
     }

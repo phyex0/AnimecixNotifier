@@ -25,6 +25,7 @@ public class AnimecixTelegramNotifier implements AnimecixNotifier {
     @SneakyThrows
     public void notify(NotifyDTO notifyDTO) {
         SendMessage sendMessage = new SendMessage(notifyDTO.notifyId(), notifyDTO.content());
+        log.debug("Send Telegram message: {}", sendMessage);
         telegramClient.execute(sendMessage);
     }
 }

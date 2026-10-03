@@ -36,9 +36,9 @@ public class AnimecixFetchServiceImpl implements AnimecixFetchService {
     }
 
     @Recover
-    public Optional<UserDTO> recoverUser(FetchException fe, LoginDTO loginDTO) {
+    public Optional<UserDTO> recoverUser(Exception ex, LoginDTO loginDTO) {
         //TODO notify Admin
-        log.error(fe.getMessage());
+        log.error(ex.getMessage());
         return Optional.empty();
     }
 
@@ -56,10 +56,9 @@ public class AnimecixFetchServiceImpl implements AnimecixFetchService {
     }
 
     @Recover
-    @Retryable(retryFor = FetchException.class)
-    public Optional<LastEpisode> recoverLastEpisode(FetchException fe, Integer page) {
+    public Optional<LastEpisode> recoverLastEpisode(Exception ex, Integer page) {
         //TODO notify Admin 
-        log.error(fe.getMessage());
+        log.error(ex.getMessage());
         return Optional.empty();
     }
 }
