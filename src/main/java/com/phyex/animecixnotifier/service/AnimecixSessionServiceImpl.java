@@ -1,7 +1,7 @@
 package com.phyex.animecixnotifier.service;
 
 import com.phyex.animecixnotifier.client.AnimecixSessionClient;
-import com.phyex.animecixnotifier.config.ClientConfig;
+import com.phyex.animecixnotifier.config.SystemConfig;
 import com.phyex.animecixnotifier.dto.SessionInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +17,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AnimecixSessionServiceImpl implements AnimecixSessionService {
 
-    private final ClientConfig clientConfig;
+    private final SystemConfig systemConfig;
     private final AnimecixSessionClient animecixSessionClient;
 
     @Override
     public SessionInfo getSessionInfo(String email) {
-        ResponseEntity<String> bootstrapData = animecixSessionClient.bootstrapData(clientConfig.getAnimecix());
+        ResponseEntity<String> bootstrapData = animecixSessionClient.bootstrapData(systemConfig.getAnimecixUrl());
+        log.debug("Session Info fetch response: {}", bootstrapData);
         List<String> setCookieHeaders = Optional
                 .ofNullable(
                         bootstrapData

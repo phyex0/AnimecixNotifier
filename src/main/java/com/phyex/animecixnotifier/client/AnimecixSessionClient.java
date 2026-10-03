@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "AnimecixSessionClient", url = "${client.animecix}")
+@FeignClient(name = "AnimecixSessionClient", url = "${system-config.animecix-url}")
 public interface AnimecixSessionClient {
 
     @GetMapping("/secure/bootstrap-data")

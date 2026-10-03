@@ -1,7 +1,8 @@
 package com.phyex.animecixnotifier.controller;
 
 import com.phyex.animecixnotifier.dto.RegisterDTO;
-import com.phyex.animecixnotifier.service.AnimecixNotifierService;
+import com.phyex.animecixnotifier.service.AnimecixUserService;
+import com.phyex.animecixnotifier.service.AnimecixScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,18 +18,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController("/animecix-notifier")
 public class AnimecixNotifierController {
 
-    private final AnimecixNotifierService animecixNotifierService;
+    private final AnimecixUserService animecixUserService;
+    private final AnimecixScheduleService animecixScheduleService;
 
     @PostMapping
     public ResponseEntity<Void> registerNotifier(@RequestBody @Valid RegisterDTO registerDTO) {
-        animecixNotifierService.register(registerDTO);
+        animecixUserService.register(registerDTO);
 
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<Void> update() {
-        animecixNotifierService.updateAll();
+    @PostMapping("/new-episode-scheduler")
+    public ResponseEntity<Void> newEpisodeScheduler() {
+        animecixScheduleService.newEpisodeScheduler();
 
         return ResponseEntity.ok().build();
     }

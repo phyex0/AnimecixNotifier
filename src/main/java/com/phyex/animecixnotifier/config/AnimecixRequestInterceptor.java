@@ -24,6 +24,7 @@ public class AnimecixRequestInterceptor implements RequestInterceptor {
 
         template.headers().getOrDefault("email", List.of()).stream().findFirst().ifPresent(email -> {
             SessionInfo sessionInfo = animecixSessionService.getSessionInfo(email);
+            log.debug("Session Info: {}", sessionInfo);
 
             String cookieHeader = sessionInfo.cookie().stream()
                     .map(cookie -> cookie.substring(0, cookie.indexOf(';')))

@@ -1,5 +1,6 @@
 package com.phyex.animecixnotifier.config;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,8 +11,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @NoArgsConstructor
 @AllArgsConstructor
-@ConfigurationProperties("client")
-public class ClientConfig {
+@ConfigurationProperties("system-config")
+public class SystemConfig {
 
-    private String animecix;
+    @NotBlank
+    private String animecixUrl;
+
+    private Integer batchSize = 1000;
+
+    private Integer scheduleFixedRate = 2;
+
+    @NotBlank
+    private String telegramApiKey;
 }

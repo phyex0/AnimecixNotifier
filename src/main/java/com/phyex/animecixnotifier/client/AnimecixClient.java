@@ -9,7 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "AnimecixClient", url = "${client.animecix}", configuration = AnimecixRequestInterceptor.class)
+@FeignClient(name = "AnimecixClient", url = "${system-config.animecix-url}", configuration = AnimecixRequestInterceptor.class)
 public interface AnimecixClient {
 
     @PostMapping(value = "/secure/auth/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -17,8 +17,4 @@ public interface AnimecixClient {
 
     @GetMapping(value = "secure/last-episodes", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<LastEpisode> fetchLastEpisode(@RequestParam(defaultValue = "1") Integer page);
-
-    default ResponseEntity<LastEpisode> fetchLastEpisode() {
-        return fetchLastEpisode(null);
-    }
 }

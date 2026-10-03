@@ -19,5 +19,8 @@ logging:
   level:
     root: info
 
-client:
-  animecix: https://animecix.tv
+system-config:
+  animecix-url: https://animecix.tv
+  batch-size: 1000
+  schedule-fixed-rate: 2
+  telegram-api-key: test

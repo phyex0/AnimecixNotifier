@@ -6,15 +6,13 @@ import com.phyex.animecixnotifier.dto.RegisterDTO;
 
 import java.util.Optional;
 
-public interface AnimecixNotifierService {
+public interface AnimecixUserService {
 
     void register(RegisterDTO registerDTO);
 
     Optional<UserDocument> fetchUserDocument(LoginDTO loginDTO);
 
     void fetchLastEpisodes();
-
-    void updateAll();
 
     void updateUser(UserDocument userDocument);
 
